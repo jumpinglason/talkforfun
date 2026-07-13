@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Talk4Fun — talk to a stranger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============ SCREEN 0: LANDING (about + age/terms consent) ============ -->
+<section id="screen-landing" class="screen active">
+  <div class="card landing-card">
+    <div class="logo">Talk<span class="accent">4</span>Fun</div>
+    <p class="tagline">Talk to a stranger — by text or by voice call. No sign-up, no camera, ever.</p>
+
+    <div class="about">
+      <h2>How it works</h2>
+      <ul>
+        <li>Pick a name — nobody needs your real one.</li>
+        <li>Add what you're into, or leave it blank for a random match.</li>
+        <li>Chat by text, or start a voice call if you both want to.</li>
+        <li>Leave anytime — nothing is saved once you go.</li>
+      </ul>
+    </div>
+
+    <div class="consent">
+      <label class="checkbox-row">
+        <input type="checkbox" id="ageCheck" />
+        <span>I confirm that I am over 18 years old.</span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="termsCheck" />
+        <span>I agree to Talk4Fun's <button type="button" id="termsLink" class="link-btn">terms and conditions</button>.</span>
+      </label>
+    </div>
+
+    <button id="landingFindMatchBtn" class="btn-primary" disabled>Find Match</button>
+  </div>
+</section>
+
+<!-- Terms modal -->
+<div id="termsModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Terms &amp; Conditions</h2>
+    <div class="terms-text">
+      <p>By using Talk4Fun you agree to the following:</p>
+      <ul>
+        <li>You are at least 18 years old.</li>
+        <li>You will not share sexual content involving minors, threats, harassment, or content that exploits or endangers anyone. Violations may be reported to the relevant authorities.</li>
+        <li>Conversations are not moderated or reviewed in real time. Use your judgment about what you share, and never share personal information you wouldn't want a stranger to have.</li>
+        <li>Talk4Fun is provided as-is, with no guarantee of uptime, matching speed, or call quality.</li>
+        <li>You can end a chat or call at any time with the "New Stranger" button.</li>
+      </ul>
+      <p>This is a placeholder policy — replace it with your own before a public launch.</p>
+    </div>
+    <button id="closeTermsBtn" class="btn-secondary">Close</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 1: CREATE YOUR PROFILE ============ -->
+<section id="screen-profile" class="screen">
+  <div class="card">
+    <div class="profile-header">
+      <button type="button" id="backToLandingBtn" class="back-btn" aria-label="Go back">←</button>
+      <h2 class="screen-title">Create your profile</h2>
+    </div>
+    <form id="profileForm" autocomplete="off">
+      <label class="field">
+        <span class="field-label">Name</span>
+        <input id="nicknameInput" type="text" maxlength="24" placeholder="Enter your name" />
+        <span class="field-error hidden" id="nicknameError">Name is required.</span>
+      </label>
+
+      <label class="field">
+        <span class="field-label">Interest <em>(optional)</em></span>
+        <input id="interestsInput" type="text" maxlength="120" placeholder="e.g. anime, guitar, hiking" />
+      </label>
+      <p class="hint">Leave it blank to get matched with a total stranger.</p>
+
+      <div class="mode-select">
+        <span class="field-label">Chat mode</span>
+        <div class="mode-toggle">
+          <button type="button" class="mode-btn active" id="modeTextBtn" data-mode="text">Text Chat</button>
+          <button type="button" class="mode-btn" id="modeCallBtn" data-mode="call">Call Chat</button>
+        </div>
+        <p class="hint mode-hint" id="modeHint">Text only — send messages back and forth.</p>
+      </div>
+
+      <button type="submit" class="btn-primary" id="findMatchBtn">Find Match</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ SCREEN 2: SEARCHING ============ -->
+<section id="screen-searching" class="screen">
+  <div class="card">
+    <div class="pulse-dots" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <p class="status-text">Finding you a match…</p>
+    <p class="status-sub" id="searchSub"></p>
+    <button class="btn-secondary" id="cancelSearchBtn">Cancel</button>
+  </div>
+</section>
+
+<!-- ============ SCREEN 3: CONNECTED (chat + call) ============ -->
+<section id="screen-chat" class="screen">
+  <header class="chat-header">
+    <div class="signal-info">
+      <span class="on-air">● connected</span>
+      <span class="partner-name" id="partnerNameLabel">Stranger</span>
+    </div>
+    <div class="shared-tags" id="sharedTags"></div>
+    <div class="header-actions">
+      <button id="callBtn" class="btn-icon" title="Start voice call">Call</button>
+      <button id="newChatBtn" class="btn-secondary small">New Stranger</button>
+    </div>
+  </header>
+
+  <div id="callBar" class="call-bar hidden">
+    <span id="callStatus">Calling…</span>
+    <button id="acceptCallBtn" class="btn-primary small hidden">Accept</button>
+    <button id="hangupBtn" class="btn-danger small">End Call</button>
+    <audio id="remoteAudio" autoplay></audio>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="typing-indicator hidden" id="typingIndicator">Stranger is typing…</div>
+
+  <form id="messageForm" class="message-form">
+    <input id="messageInput" type="text" placeholder="Say something…" maxlength="2000" autocomplete="off" />
+    <button type="submit" class="btn-primary small">Send</button>
+  </form>
+</section>
+
+<!-- Partner left / disconnected banner -->
+<div id="toast" class="toast hidden"></div>
+
+<button id="themeToggle" class="theme-toggle" aria-label="Switch to dark mode">🌙</button>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
