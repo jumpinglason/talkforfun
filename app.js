@@ -27,7 +27,7 @@ themeToggle.addEventListener('click', () => {
 // IMPORTANT: set SERVER_URL to wherever server/server.js is deployed
 // (e.g. Render/Railway/Fly.io). If you're serving this frontend from the
 // SAME server, leave it as an empty string.
-const SERVER_URL = ""; // e.g. "https://your-app.onrender.com"
+const SERVER_URL = "https://talk4fun-server.onrender.com"; // e.g. "https://your-app.onrender.com"
 
 const socket = SERVER_URL ? io(SERVER_URL) : io();
 
