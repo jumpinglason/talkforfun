@@ -73,9 +73,15 @@ function endPairing(socketId, reason) {
   removeFromWaitingPool(socketId);
 }
 
+function broadcastOnlineCount() {
+  io.emit('online-count', io.engine.clientsCount);
+}
+
 io.on('connection', (socket) => {
   socket.data.nickname = 'Stranger';
   socket.data.interests = [];
+
+  broadcastOnlineCount();
 
   socket.on('find-match', ({ nickname, interests }) => {
     // Reset if this socket was already paired or waiting
@@ -174,6 +180,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     endPairing(socket.id, 'disconnected');
+    broadcastOnlineCount();
   });
 });
 
